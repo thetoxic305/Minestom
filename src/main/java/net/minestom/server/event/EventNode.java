@@ -10,6 +10,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Set;
+import java.util.function.BiConsumer;
 import java.util.function.BiPredicate;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
@@ -358,4 +359,14 @@ public sealed interface EventNode<T extends Event> permits EventNodeImpl {
 
     @ApiStatus.Experimental
     void unregister(@NotNull EventBinding<? extends T> binding);
+
+    default <E extends T> E call(@NotNull EventContext<E> context, @NotNull E event) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Contract(value = "_, _ -> this")
+    default <E extends Event> @NotNull EventNode<T> addListener(@NotNull Class<E> eventType,
+                                                                @NotNull BiConsumer<EventContext<E>, E> listener) {
+        throw new UnsupportedOperationException();
+    }
 }
