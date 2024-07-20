@@ -3,6 +3,7 @@ package net.minestom.server.entity.metadata;
 import net.kyori.adventure.text.Component;
 import net.minestom.server.entity.Entity;
 import net.minestom.server.entity.EntityPose;
+import net.minestom.server.entity.EntityPose;
 import net.minestom.server.entity.MetadataDef;
 import net.minestom.server.entity.MetadataHolder;
 import org.jetbrains.annotations.NotNull;
