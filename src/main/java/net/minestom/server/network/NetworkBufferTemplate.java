@@ -7,6 +7,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 public final class NetworkBufferTemplate {
+
     @FunctionalInterface
     public interface F1<P1, R> {
         R apply(P1 p1);
