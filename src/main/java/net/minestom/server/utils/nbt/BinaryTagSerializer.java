@@ -1,5 +1,6 @@
 package net.minestom.server.utils.nbt;
 
+import net.kyori.adventure.key.Key;
 import net.kyori.adventure.key.Keyed;
 import net.kyori.adventure.nbt.*;
 import net.kyori.adventure.text.Component;
@@ -13,7 +14,6 @@ import net.minestom.server.item.ItemStack;
 import net.minestom.server.registry.DynamicRegistry;
 import net.minestom.server.registry.ProtocolObject;
 import net.minestom.server.registry.Registries;
-import net.minestom.server.utils.NamespaceID;
 import net.minestom.server.utils.UniqueIdUtils;
 import net.minestom.server.utils.Unit;
 import net.minestom.server.utils.validate.Check;
@@ -639,7 +639,7 @@ public interface BinaryTagSerializer<T> {
                 final String type = compound.getString(key);
                 Check.argCondition(type.isEmpty(), "Missing {0} field: {1}", key, tag);
                 //noinspection unchecked
-                final BinaryTagSerializer<T> serializer = (BinaryTagSerializer<T>) registry.get(NamespaceID.from(type));
+                final BinaryTagSerializer<T> serializer = (BinaryTagSerializer<T>) registry.get(Key.key(type));
                 Check.notNull(serializer, "Unregistered serializer for: {0}", type);
 
                 return serializer.read(context, tag);

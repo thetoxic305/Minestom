@@ -8,7 +8,6 @@ import net.minestom.server.coordinate.Point;
 import net.minestom.server.item.ItemStack;
 import net.minestom.server.network.NetworkBuffer;
 import net.minestom.server.registry.StaticProtocolObject;
-import net.minestom.server.utils.NamespaceID;
 import net.minestom.server.utils.block.BlockUtils;
 import net.minestom.server.utils.nbt.BinaryTagSerializer;
 import net.minestom.server.utils.validate.Check;
@@ -50,7 +49,7 @@ public sealed interface Particle extends StaticProtocolObject, Particles permits
         return ParticleImpl.getSafe(namespaceID);
     }
 
-    static @Nullable Particle fromNamespaceId(@NotNull NamespaceID namespaceID) {
+    static @Nullable Particle fromNamespaceId(@NotNull Key namespaceID) {
         return fromNamespaceId(namespaceID.asString());
     }
 
@@ -64,7 +63,7 @@ public sealed interface Particle extends StaticProtocolObject, Particles permits
 
     @NotNull CompoundBinaryTag toNbt();
 
-    record Simple(@NotNull NamespaceID namespace, int id) implements Particle {
+    record Simple(@NotNull Key namespace, int id) implements Particle {
         @Override
         public @NotNull Particle readData(@NotNull NetworkBuffer reader) {
             return this;
@@ -82,7 +81,7 @@ public sealed interface Particle extends StaticProtocolObject, Particles permits
         }
     }
 
-    record Block(@NotNull NamespaceID namespace, int id,
+    record Block(@NotNull Key namespace, int id,
                  @NotNull net.minestom.server.instance.block.Block block) implements Particle {
 
         @Contract(pure = true)
@@ -112,7 +111,7 @@ public sealed interface Particle extends StaticProtocolObject, Particles permits
         }
     }
 
-    record BlockMarker(@NotNull NamespaceID namespace, int id,
+    record BlockMarker(@NotNull Key namespace, int id,
                        @NotNull net.minestom.server.instance.block.Block block) implements Particle {
 
         @Contract(pure = true)
@@ -143,7 +142,7 @@ public sealed interface Particle extends StaticProtocolObject, Particles permits
 
     }
 
-    record Dust(@NotNull NamespaceID namespace, int id, @NotNull RGBLike color, float scale) implements Particle {
+    record Dust(@NotNull Key namespace, int id, @NotNull RGBLike color, float scale) implements Particle {
 
         @Contract(pure = true)
         public @NotNull Dust withProperties(@NotNull RGBLike color, float scale) {
@@ -181,7 +180,7 @@ public sealed interface Particle extends StaticProtocolObject, Particles permits
         }
     }
 
-    record DustColorTransition(@NotNull NamespaceID namespace, int id, @NotNull RGBLike color,
+    record DustColorTransition(@NotNull Key namespace, int id, @NotNull RGBLike color,
                                @NotNull RGBLike transitionColor, float scale) implements Particle {
 
         @Contract(pure = true)
@@ -229,7 +228,7 @@ public sealed interface Particle extends StaticProtocolObject, Particles permits
         }
     }
 
-    record DustPillar(@NotNull NamespaceID namespace, int id,
+    record DustPillar(@NotNull Key namespace, int id,
                       @NotNull net.minestom.server.instance.block.Block block) implements Particle {
 
         @Contract(pure = true)
@@ -260,7 +259,7 @@ public sealed interface Particle extends StaticProtocolObject, Particles permits
 
     }
 
-    record FallingDust(@NotNull NamespaceID namespace, int id,
+    record FallingDust(@NotNull Key namespace, int id,
                        @NotNull net.minestom.server.instance.block.Block block) implements Particle {
 
         @Contract(pure = true)
@@ -291,7 +290,7 @@ public sealed interface Particle extends StaticProtocolObject, Particles permits
 
     }
 
-    record Item(@NotNull NamespaceID namespace, int id, @NotNull ItemStack item) implements Particle {
+    record Item(@NotNull Key namespace, int id, @NotNull ItemStack item) implements Particle {
 
         @Contract(pure = true)
         public @NotNull Item withItem(@NotNull ItemStack item) {
@@ -317,7 +316,7 @@ public sealed interface Particle extends StaticProtocolObject, Particles permits
         }
     }
 
-    record EntityEffect(@NotNull NamespaceID namespace, int id, @NotNull AlphaColor color) implements Particle {
+    record EntityEffect(@NotNull Key namespace, int id, @NotNull AlphaColor color) implements Particle {
 
         @Contract(pure = true)
         public @NotNull EntityEffect withColor(@NotNull AlphaColor color) {
@@ -353,7 +352,7 @@ public sealed interface Particle extends StaticProtocolObject, Particles permits
         }
     }
 
-    record SculkCharge(@NotNull NamespaceID namespace, int id, float roll) implements Particle {
+    record SculkCharge(@NotNull Key namespace, int id, float roll) implements Particle {
 
         @Contract(pure = true)
         public @NotNull SculkCharge withRoll(float roll) {
@@ -380,7 +379,7 @@ public sealed interface Particle extends StaticProtocolObject, Particles permits
         }
     }
 
-    record Shriek(@NotNull NamespaceID namespace, int id, int delay) implements Particle {
+    record Shriek(@NotNull Key namespace, int id, int delay) implements Particle {
 
         @Contract(pure = true)
         public @NotNull Shriek withDelay(int delay) {
@@ -406,7 +405,7 @@ public sealed interface Particle extends StaticProtocolObject, Particles permits
         }
     }
 
-    record Vibration(@NotNull NamespaceID namespace, int id, @NotNull SourceType sourceType,
+    record Vibration(@NotNull Key namespace, int id, @NotNull SourceType sourceType,
                      @Nullable Point sourceBlockPosition, int sourceEntityId, float sourceEntityEyeHeight,
                      int travelTicks) implements Particle {
 

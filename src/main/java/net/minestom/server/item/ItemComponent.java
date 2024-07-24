@@ -1,5 +1,6 @@
 package net.minestom.server.item;
 
+import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.util.RGBLike;
 import net.minestom.server.color.Color;
@@ -10,7 +11,6 @@ import net.minestom.server.gamedata.tags.Tag;
 import net.minestom.server.item.component.*;
 import net.minestom.server.network.NetworkBuffer;
 import net.minestom.server.registry.ObjectSet;
-import net.minestom.server.utils.NamespaceID;
 import net.minestom.server.utils.Unit;
 import net.minestom.server.utils.collection.ObjectArray;
 import net.minestom.server.utils.nbt.BinaryTagSerializer;
@@ -106,7 +106,7 @@ public final class ItemComponent {
         return NAMESPACES.get(namespaceId);
     }
 
-    public static @Nullable DataComponent<?> fromNamespaceId(@NotNull NamespaceID namespaceId) {
+    public static @Nullable DataComponent<?> fromNamespaceId(@NotNull Key namespaceId) {
         return fromNamespaceId(namespaceId.asString());
     }
 
@@ -119,7 +119,7 @@ public final class ItemComponent {
     }
 
     static <T> DataComponent<T> register(@NotNull String name, @Nullable NetworkBuffer.Type<T> network, @Nullable BinaryTagSerializer<T> nbt) {
-        DataComponent<T> impl = DataComponent.createHeadless(NAMESPACES.size(), NamespaceID.from(name), network, nbt);
+        DataComponent<T> impl = DataComponent.createHeadless(NAMESPACES.size(), Key.key(name), network, nbt);
         NAMESPACES.put(impl.name(), impl);
         IDS.set(impl.id(), impl);
         return impl;

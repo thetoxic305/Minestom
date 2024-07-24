@@ -1,9 +1,9 @@
 package net.minestom.server.entity;
 
+import net.kyori.adventure.key.Key;
 import net.minestom.server.network.NetworkBuffer;
 import net.minestom.server.registry.Registry;
 import net.minestom.server.registry.StaticProtocolObject;
-import net.minestom.server.utils.NamespaceID;
 import net.minestom.server.utils.nbt.BinaryTagSerializer;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -24,7 +24,7 @@ public sealed interface EntityType extends StaticProtocolObject, EntityTypes per
     @NotNull Registry.EntityEntry registry();
 
     @Override
-    default @NotNull NamespaceID namespace() {
+    default @NotNull Key namespace() {
         return registry().namespace();
     }
 
@@ -49,7 +49,7 @@ public sealed interface EntityType extends StaticProtocolObject, EntityTypes per
         return EntityTypeImpl.getSafe(namespaceID);
     }
 
-    static EntityType fromNamespaceId(@NotNull NamespaceID namespaceID) {
+    static EntityType fromNamespaceId(@NotNull Key namespaceID) {
         return fromNamespaceId(namespaceID.asString());
     }
 

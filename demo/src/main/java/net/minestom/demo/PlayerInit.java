@@ -1,5 +1,6 @@
 package net.minestom.demo;
 
+import net.kyori.adventure.key.Key;
 import net.kyori.adventure.sound.Sound;
 import net.kyori.adventure.text.Component;
 import net.minestom.server.FeatureFlag;
@@ -220,7 +221,7 @@ public class PlayerInit {
         instanceContainer.setTimeRate(0);
         instanceContainer.setTime(12000);
 
-//        var i2 = new InstanceContainer(UUID.randomUUID(), DimensionType.OVERWORLD, null, NamespaceID.from("minestom:demo"));
+//        var i2 = new InstanceContainer(UUID.randomUUID(), DimensionType.OVERWORLD, null, Key.key("minestom:demo"));
 //        instanceManager.registerInstance(i2);
 //        i2.setGenerator(unit -> unit.modifier().fillHeight(0, 40, Block.GRASS_BLOCK));
 //        i2.setChunkSupplier(LightingChunk::new);

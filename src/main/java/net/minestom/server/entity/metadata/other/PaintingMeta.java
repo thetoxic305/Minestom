@@ -1,5 +1,6 @@
 package net.minestom.server.entity.metadata.other;
 
+import net.kyori.adventure.key.Key;
 import net.kyori.adventure.nbt.CompoundBinaryTag;
 import net.minestom.server.entity.Entity;
 import net.minestom.server.entity.MetadataDef;
@@ -11,7 +12,6 @@ import net.minestom.server.registry.DynamicRegistry;
 import net.minestom.server.registry.ProtocolObject;
 import net.minestom.server.registry.Registries;
 import net.minestom.server.registry.Registry;
-import net.minestom.server.utils.NamespaceID;
 import net.minestom.server.utils.nbt.BinaryTagSerializer;
 import net.minestom.server.utils.validate.Check;
 import org.jetbrains.annotations.ApiStatus;
@@ -82,7 +82,7 @@ public class PaintingMeta extends EntityMeta implements ObjectDataProvider {
         @NotNull BinaryTagSerializer<DynamicRegistry.Key<Variant>> NBT_TYPE = BinaryTagSerializer.registryKey(Registries::paintingVariant);
 
         static @NotNull Variant create(
-                @NotNull NamespaceID assetId,
+                @NotNull Key assetId,
                 int width, int height
         ) {
             return new VariantImpl(assetId, width, height, null);
@@ -105,7 +105,7 @@ public class PaintingMeta extends EntityMeta implements ObjectDataProvider {
             );
         }
 
-        @NotNull NamespaceID assetId();
+        @NotNull Key assetId();
 
         int width();
 
@@ -115,7 +115,7 @@ public class PaintingMeta extends EntityMeta implements ObjectDataProvider {
         @Nullable Registry.PaintingVariantEntry registry();
 
         class Builder {
-            private NamespaceID assetId;
+            private Key assetId;
             private int width;
             private int height;
 
@@ -123,7 +123,7 @@ public class PaintingMeta extends EntityMeta implements ObjectDataProvider {
             }
 
             @Contract(value = "_ -> this", pure = true)
-            public @NotNull Builder assetId(@NotNull NamespaceID assetId) {
+            public @NotNull Builder assetId(@NotNull Key assetId) {
                 this.assetId = assetId;
                 return this;
             }
@@ -147,7 +147,7 @@ public class PaintingMeta extends EntityMeta implements ObjectDataProvider {
     }
 
     record VariantImpl(
-            @NotNull NamespaceID assetId,
+            @NotNull Key assetId,
             int width,
             int height,
             @Nullable Registry.PaintingVariantEntry registry

@@ -1,12 +1,12 @@
 package net.minestom.server.registry;
 
+import net.kyori.adventure.key.Key;
 import net.kyori.adventure.nbt.BinaryTag;
 import net.kyori.adventure.nbt.BinaryTagTypes;
 import net.kyori.adventure.nbt.ListBinaryTag;
 import net.kyori.adventure.nbt.StringBinaryTag;
 import net.minestom.server.MinecraftServer;
 import net.minestom.server.network.NetworkBuffer;
-import net.minestom.server.utils.NamespaceID;
 import net.minestom.server.utils.nbt.BinaryTagSerializer;
 import org.jetbrains.annotations.NotNull;
 
@@ -22,7 +22,7 @@ sealed interface ObjectSetImpl<T extends ProtocolObject> extends ObjectSet<T> pe
         static final Empty<?> INSTANCE = new Empty<>();
 
         @Override
-        public boolean contains(@NotNull NamespaceID namespace) {
+        public boolean contains(@NotNull Key namespace) {
             return false;
         }
     }
@@ -34,7 +34,7 @@ sealed interface ObjectSetImpl<T extends ProtocolObject> extends ObjectSet<T> pe
         }
 
         @Override
-        public boolean contains(@NotNull NamespaceID namespace) {
+        public boolean contains(@NotNull Key namespace) {
             return entries.contains(namespace);
         }
     }
@@ -42,7 +42,7 @@ sealed interface ObjectSetImpl<T extends ProtocolObject> extends ObjectSet<T> pe
     final class Tag<T extends ProtocolObject> implements ObjectSetImpl<T> {
         private final net.minestom.server.gamedata.tags.Tag.BasicType tagType;
         private final String name;
-        private volatile Set<NamespaceID> value = null;
+        private volatile Set<Key> value = null;
 
         public Tag(@NotNull net.minestom.server.gamedata.tags.Tag.BasicType tagType, @NotNull String name) {
             this.tagType = tagType;
@@ -59,7 +59,7 @@ sealed interface ObjectSetImpl<T extends ProtocolObject> extends ObjectSet<T> pe
             return name;
         }
 
-        public Set<NamespaceID> value() {
+        public Set<Key> value() {
             if (value == null) {
                 synchronized (this) {
                     if (value == null) {
@@ -72,7 +72,7 @@ sealed interface ObjectSetImpl<T extends ProtocolObject> extends ObjectSet<T> pe
         }
 
         @Override
-        public boolean contains(@NotNull NamespaceID namespace) {
+        public boolean contains(@NotNull Key namespace) {
             return value().contains(namespace);
         }
     }
@@ -102,11 +102,11 @@ sealed interface ObjectSetImpl<T extends ProtocolObject> extends ObjectSet<T> pe
                 case ListBinaryTag list -> {
                     if (list.size() == 0) yield ObjectSet.empty();
 
-                    final List<NamespaceID> entries = new ArrayList<>(list.size());
+                    final List<Key> entries = new ArrayList<>(list.size());
                     for (BinaryTag entryTag : list) {
                         if (!(entryTag instanceof StringBinaryTag stringTag))
                             throw new IllegalArgumentException("Invalid entry type: " + entryTag.type());
-                        entries.add(NamespaceID.from(stringTag.value()));
+                        entries.add(Key.key(stringTag.value()));
                     }
                     yield new Entries<>(entries);
                 }
@@ -116,7 +116,7 @@ sealed interface ObjectSetImpl<T extends ProtocolObject> extends ObjectSet<T> pe
                     if (value.startsWith("#")) {
                         yield new Tag<>(tagType(), value.substring(1));
                     } else {
-                        yield new Entries<>(List.of(NamespaceID.from(value)));
+                        yield new Entries<>(List.of(Key.key(value)));
                     }
                 }
                 default -> throw new IllegalArgumentException("Invalid tag type: " + tag.type());
@@ -131,7 +131,7 @@ sealed interface ObjectSetImpl<T extends ProtocolObject> extends ObjectSet<T> pe
                     if (entries.entries.size() == 1)
                         yield stringBinaryTag(entries.entries.stream().findFirst().get().asString());
                     ListBinaryTag.Builder<StringBinaryTag> builder = ListBinaryTag.builder(BinaryTagTypes.STRING);
-                    for (NamespaceID entry : entries.entries)
+                    for (Key entry : entries.entries)
                         builder.add(stringBinaryTag(entry.asString()));
                     yield builder.build();
                 }
