@@ -13,14 +13,14 @@ import java.util.Collection;
 
 final class ParticleImpl {
     private static final Registry.Container<Particle> CONTAINER = Registry.createStaticContainer(Registry.Resource.PARTICLES,
-            (namespace, properties) -> defaultParticle(Key.key(namespace), properties.getInt("id")));
+            (key, properties) -> defaultParticle(Key.key(key), properties.getInt("id")));
 
-    static Particle get(@NotNull String namespace) {
-        return CONTAINER.get(namespace);
+    static Particle get(@NotNull String key) {
+        return CONTAINER.get(key);
     }
 
-    static Particle getSafe(@NotNull String namespace) {
-        return CONTAINER.getSafe(namespace);
+    static Particle getSafe(@NotNull String key) {
+        return CONTAINER.getSafe(key);
     }
 
     static Particle getId(int id) {

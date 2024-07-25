@@ -40,7 +40,7 @@ record BlockImpl(@NotNull Registry.BlockEntry registry,
     // Block id -> Map<Properties, Block>
     private static final ObjectArray<Long2ObjectArrayMap<BlockImpl>> POSSIBLE_STATES = ObjectArray.singleThread();
     private static final Registry.Container<Block> CONTAINER = Registry.createStaticContainer(Registry.Resource.BLOCKS,
-            (namespace, properties) -> {
+            (key, properties) -> {
                 final int blockId = properties.getInt("id");
                 final Registry.Properties stateObject = properties.section("states");
 
@@ -86,7 +86,7 @@ record BlockImpl(@NotNull Registry.BlockEntry registry,
                         }
 
                         var mainProperties = Registry.Properties.fromMap(new MergedMap<>(stateOverride, properties.asMap()));
-                        final BlockImpl block = new BlockImpl(Registry.block(namespace, mainProperties),
+                        final BlockImpl block = new BlockImpl(Registry.block(key, mainProperties),
                                 propertiesValue, null, null);
                         BLOCK_STATE_MAP.set(block.stateId(), block);
                         propertiesKeys[propertiesOffset] = propertiesValue;
@@ -105,12 +105,12 @@ record BlockImpl(@NotNull Registry.BlockEntry registry,
         POSSIBLE_STATES.trim();
     }
 
-    static Block get(@NotNull String namespace) {
-        return CONTAINER.get(namespace);
+    static Block get(@NotNull String key) {
+        return CONTAINER.get(key);
     }
 
-    static Block getSafe(@NotNull String namespace) {
-        return CONTAINER.getSafe(namespace);
+    static Block getSafe(@NotNull String key) {
+        return CONTAINER.getSafe(key);
     }
 
     static Block getId(int id) {

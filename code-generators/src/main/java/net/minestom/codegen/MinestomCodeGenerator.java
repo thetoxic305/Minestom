@@ -28,8 +28,8 @@ public abstract class MinestomCodeGenerator {
         }
     }
 
-    protected static String toConstant(String namespace) {
-        return namespace.replace("minecraft:", "")
+    protected static String toConstant(String key) {
+        return key.replace("minecraft:", "")
                 .replace("brigadier:", "")
                 .toUpperCase(Locale.ROOT);
     }
