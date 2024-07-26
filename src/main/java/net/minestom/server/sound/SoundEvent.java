@@ -99,6 +99,23 @@ public sealed interface SoundEvent extends ProtocolObject, Keyed, Sound.Type, So
     }
 
     /**
+     * @deprecated use {@link #fromKey(String)}
+     */
+    @Deprecated
+    static SoundEvent fromNamespaceId(@NotNull String namespaceID) {
+        return fromKey(namespaceID);
+    }
+
+    /**
+     * @deprecated use {@link #fromKey(Key)}
+     */
+    @Deprecated
+    static SoundEvent fromNamespaceId(@NotNull NamespaceID namespaceID) {
+        return fromKey(namespaceID);
+    }
+
+
+    /**
      * Get a builtin sound event by its protocol ID. Will never return a custom/resource pack sound.
      *
      * @param id the ID of the sound event
@@ -133,6 +150,17 @@ public sealed interface SoundEvent extends ProtocolObject, Keyed, Sound.Type, So
     @Contract(pure = true)
     default @NotNull String name() {
         return key().asString();
+    }
+
+
+
+    /**
+     * @deprecated use {@link #key()}
+     */
+    @Deprecated
+    @Contract(pure = true)
+    default @NotNull NamespaceID namespace() {
+        return NamespaceID.from(key());
     }
 
 }

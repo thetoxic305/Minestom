@@ -53,6 +53,23 @@ public sealed interface Particle extends StaticProtocolObject, Particles permits
         return fromKey(key.asString());
     }
 
+    /**
+     * @deprecated use {@link #fromKey(String)}
+     */
+    @Deprecated
+    static Particle fromNamespaceId(@NotNull String namespaceID) {
+        return fromKey(namespaceID);
+    }
+
+    /**
+     * @deprecated use {@link #fromKey(Key)}
+     */
+    @Deprecated
+    static Particle fromNamespaceId(@NotNull NamespaceID namespaceID) {
+        return fromKey(namespaceID);
+    }
+
+
     static @Nullable Particle fromId(int id) {
         return ParticleImpl.getId(id);
     }

@@ -110,6 +110,23 @@ public final class ItemComponent {
         return fromKey(key.asString());
     }
 
+    /**
+     * @deprecated use {@link #fromKey(String)}
+     */
+    @Deprecated
+    static DataComponent<?> fromNamespaceId(@NotNull String namespaceID) {
+        return fromKey(namespaceID);
+    }
+
+    /**
+     * @deprecated use {@link #fromKey(Key)}
+     */
+    @Deprecated
+    static DataComponent<?> fromNamespaceId(@NotNull NamespaceID namespaceID) {
+        return fromKey(namespaceID);
+    }
+
+
     public static @Nullable DataComponent<?> fromId(int id) {
         return IDS.get(id);
     }
