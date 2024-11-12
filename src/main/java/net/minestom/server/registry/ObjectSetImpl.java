@@ -13,10 +13,12 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.CopyOnWriteArraySet;
 
 import static net.kyori.adventure.nbt.StringBinaryTag.stringBinaryTag;
 
-sealed interface ObjectSetImpl<T extends ProtocolObject> extends ObjectSet<T> permits ObjectSetImpl.Empty, ObjectSetImpl.Entries, ObjectSetImpl.Tag {
+sealed interface ObjectSetImpl<T> extends ObjectSet<T> permits ObjectSetImpl.Empty, ObjectSetImpl.Entries, ObjectSetImpl.Tag, ObjectSetImpl.TagV2 {
 
     record Empty<T extends ProtocolObject>() implements ObjectSetImpl<T> {
         static final Empty<?> INSTANCE = new Empty<>();
@@ -36,6 +38,32 @@ sealed interface ObjectSetImpl<T extends ProtocolObject> extends ObjectSet<T> pe
         @Override
         public boolean contains(@NotNull NamespaceID namespace) {
             return entries.contains(namespace);
+        }
+    }
+
+    final class TagV2<T> implements ObjectSetImpl<T> {
+        private final NamespaceID key;
+        // Only updated by DynamicRegistryImpl while holding a write lock.
+        private final Set<NamespaceID> entries = new CopyOnWriteArraySet<>();
+
+        public TagV2(@NotNull NamespaceID key) {
+            this.key = key;
+        }
+
+        public @NotNull NamespaceID key() {
+            return key;
+        }
+
+        @Override
+        public boolean contains(@NotNull NamespaceID namespace) {
+            return entries.contains(namespace);
+        }
+
+        /**
+         * Exposed internally for {@link DynamicRegistryImpl}.
+         */
+        @NotNull Set<NamespaceID> entries() {
+            return entries;
         }
     }
 

@@ -7,6 +7,7 @@ import net.minestom.server.ServerFlag;
 import net.minestom.server.gamedata.DataPack;
 import net.minestom.server.network.packet.server.CachedPacket;
 import net.minestom.server.network.packet.server.SendablePacket;
+import net.minestom.server.network.packet.server.common.TagsPacket;
 import net.minestom.server.network.packet.server.configuration.RegistryDataPacket;
 import net.minestom.server.utils.NamespaceID;
 import net.minestom.server.utils.nbt.BinaryTagSerializer;
@@ -56,6 +57,8 @@ final class DynamicRegistryImpl<T> implements DynamicRegistry<T> {
     private final Map<NamespaceID, T> entryByName = new ConcurrentHashMap<>();
     private final List<NamespaceID> idByName = new CopyOnWriteArrayList<>();
     private final List<DataPack> packById = new CopyOnWriteArrayList<>();
+
+    private final Map<NamespaceID, ObjectSetImpl.TagV2<T>> tagsByKey = new ConcurrentHashMap<>();
 
     private final String id;
     private final BinaryTagSerializer<T> nbtType;
@@ -120,8 +123,19 @@ final class DynamicRegistryImpl<T> implements DynamicRegistry<T> {
     }
 
     @Override
+    public @Nullable ObjectSet<T> getTag(@NotNull String key) {
+        Check.argCondition(key.startsWith("#"), "Tag key must be in the format #namespace:path");
+        return tagsByKey.get(NamespaceID.from(key.substring(1)));
+    }
+
+    @Override
     public @NotNull List<T> values() {
         return Collections.unmodifiableList(entryById);
+    }
+
+    @Override
+    public @NotNull Collection<ObjectSet<T>> tags() {
+        return Collections.unmodifiableCollection(tagsByKey.values());
     }
 
     @Override
@@ -165,6 +179,9 @@ final class DynamicRegistryImpl<T> implements DynamicRegistry<T> {
             entryByName.remove(namespaceId);
             idByName.remove(id);
             packById.remove(id);
+            for (ObjectSetImpl.TagV2<T> tag : tagsByKey.values()) {
+                tag.entries().remove(namespaceId);
+            }
             if (vanillaRegistryDataPacket != null) {
                 vanillaRegistryDataPacket.invalidate();
             }
@@ -212,6 +229,26 @@ final class DynamicRegistryImpl<T> implements DynamicRegistry<T> {
             entries.add(new RegistryDataPacket.Entry(getKey(i).name(), data));
         }
         return new RegistryDataPacket(id, entries);
+    }
+
+    @Override
+    public TagsPacket.@NotNull Registry tagRegistry() {
+        // Treat this as a write even though it is not updating anything.
+        // We need a consistent view of tags and ids for the contained lookups.
+        lock.lock();
+        try {
+            final List<TagsPacket.Tag> packetEntries = new ArrayList<>();
+            for (ObjectSetImpl.TagV2<T> tag : tagsByKey.values()) {
+                int i = 0;
+                int[] entries = new int[tag.entries().size()];
+                for (NamespaceID entry : tag.entries())
+                    entries[i++] = getId(entry);
+                packetEntries.add(new TagsPacket.Tag(tag.key().asString(), entries));
+            }
+            return new TagsPacket.Registry(id, packetEntries);
+        } finally {
+            lock.unlock();
+        }
     }
 
     static <T extends ProtocolObject> void loadStaticRegistry(@NotNull DynamicRegistry<T> registry, @NotNull Registry.Resource resource, @NotNull Registry.Container.Loader<T> loader, @Nullable Comparator<String> idComparator) {

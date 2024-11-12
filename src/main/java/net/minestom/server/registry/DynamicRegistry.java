@@ -4,6 +4,7 @@ import net.kyori.adventure.key.Keyed;
 import net.minestom.server.entity.Player;
 import net.minestom.server.gamedata.DataPack;
 import net.minestom.server.network.packet.server.SendablePacket;
+import net.minestom.server.network.packet.server.common.TagsPacket;
 import net.minestom.server.utils.NamespaceID;
 import net.minestom.server.utils.nbt.BinaryTagSerializer;
 import org.jetbrains.annotations.ApiStatus;
@@ -11,6 +12,7 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 
@@ -57,6 +59,8 @@ public sealed interface DynamicRegistry<T> permits DynamicRegistryImpl {
             return namespace();
         }
     }
+
+    //todo TagKey<T>
 
     @ApiStatus.Internal
     static <T> @NotNull DynamicRegistry<T> create(@NotNull String id) {
@@ -148,6 +152,13 @@ public sealed interface DynamicRegistry<T> permits DynamicRegistryImpl {
         return getId(key.namespace());
     }
 
+    /**
+     * Get a tag by its key, should be in the form of '#namespace:path'.
+     *
+     * @param key The key of the tag
+     * @return The tag, or null if not found
+     */
+    @Nullable ObjectSet<T> getTag(@NotNull String key);
 
     /**
      * <p>Returns the entries in this registry as an immutable list. The indices in the returned list correspond
@@ -159,6 +170,16 @@ public sealed interface DynamicRegistry<T> permits DynamicRegistryImpl {
      * @return An immutable list of the entries in this registry.
      */
     @NotNull List<T> values();
+
+    /**
+     * <p>Returns the available tags in this registry.</p>
+     *
+     * <p>Note: The returned list is not guaranteed to update with the registry,
+     * it should be fetched again for updated values.</p>
+     *
+     * @return An immutable collection of the tags in this registry.
+     */
+    @NotNull Collection<ObjectSet<T>> tags();
 
     /**
      * <p>Register an object to this registry, overwriting the previous entry if any is present.</p>
@@ -219,5 +240,7 @@ public sealed interface DynamicRegistry<T> permits DynamicRegistryImpl {
      */
     @ApiStatus.Internal
     @NotNull SendablePacket registryDataPacket(@NotNull Registries registries, boolean excludeVanilla);
+
+    @NotNull TagsPacket.Registry tagRegistry();
 
 }
